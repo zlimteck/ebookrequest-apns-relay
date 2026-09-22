@@ -1,0 +1,7 @@
+[
+  {
+    "instanceId": "example-instance",
+    "label": "Instance de démonstration (à remplacer)",
+    "apiKeyHash": "REMPLACER_PAR_UN_SHA256_HEX"
+  }
+]

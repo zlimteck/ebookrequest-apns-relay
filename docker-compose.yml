@@ -1,0 +1,35 @@
+services:
+  apns-relay:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ebookrequest-apns-relay
+    restart: unless-stopped
+    ports:
+      - "3040:3040"
+    environment:
+      APNS_KEY_P8: ${APNS_KEY_P8}
+      APNS_KEY_ID: ${APNS_KEY_ID}
+      APNS_TEAM_ID: ${APNS_TEAM_ID}
+      APNS_BUNDLE_ID: com.ebookrequest.ios.full
+      APNS_PRODUCTION: "true"
+      PORT: 3040
+      INSTANCES_FILE: /app/instances.json
+      ADMIN_SECRET: ${ADMIN_SECRET}
+      NOTIFY_WEBHOOK_URL: ${NOTIFY_WEBHOOK_URL}
+    volumes:
+      # Pas de ":ro" : le service écrit dans ce fichier (demandes en attente, approbations).
+      - ./instances.json:/app/instances.json
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3040/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
