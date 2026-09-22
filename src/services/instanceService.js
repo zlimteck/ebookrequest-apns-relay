@@ -44,6 +44,20 @@ export function findInstanceByToken(token) {
   return { instanceId: match.instanceId, label: match.label };
 }
 
+/**
+ * Comme findInstanceByToken, mais retourne aussi le statut pending, pour que
+ * l'instance appelante puisse vérifier elle-même l'avancement de sa demande.
+ * @param {string} token
+ * @returns {{ instanceId: string, status: 'pending' | 'active' } | null}
+ */
+export function findInstanceStatusByToken(token) {
+  if (!token) return null;
+  const hash = hashToken(token);
+  const match = instances.find((i) => i.apiKeyHash === hash);
+  if (!match) return null;
+  return { instanceId: match.instanceId, status: isActive(match) ? 'active' : 'pending' };
+}
+
 export class InstanceServiceError extends Error {
   constructor(message, statusCode) {
     super(message);

@@ -80,6 +80,17 @@ reste inutilisable tant que vous ne l'avez pas approuvé.
    que la demande n'est pas approuvée (statut `pending`). Limité à 5
    requêtes/heure par IP.
 
+   L'instance peut ensuite vérifier elle-même l'avancement de sa demande,
+   avec son propre token (pas besoin de `ADMIN_SECRET`) :
+
+   ```bash
+   curl https://votre-relais/status \
+     -H "Authorization: Bearer <token-reçu-à-l-étape-précédente>"
+   ```
+
+   Réponse : `{ "status": "pending" }` ou `{ "status": "active" }`. Un token
+   inconnu (ou absent) renvoie `404`, sans distinguer les deux cas.
+
 2. Vous êtes notifié : un log `[Register] Nouvelle demande en attente...`
    apparaît dans les logs Docker, et si `NOTIFY_WEBHOOK_URL` est configuré
    (ntfy.sh, Discord/Slack via un endpoint compatible `{ "text": "..." }`),
