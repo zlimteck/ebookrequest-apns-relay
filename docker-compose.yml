@@ -1,8 +1,6 @@
 services:
   apns-relay:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/zlimteck/ebookrequest-apns-relay:latest
     container_name: ebookrequest-apns-relay
     restart: unless-stopped
     ports:

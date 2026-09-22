@@ -168,29 +168,43 @@ curl -X POST http://localhost:3040/send \
 
 ## Déploiement Docker
 
+L'image est buildée automatiquement par GitHub Actions
+(`.github/workflows/docker-publish.yml`) à chaque push sur `master` et
+publiée sur `ghcr.io/zlimteck/ebookrequest-apns-relay:latest`. Le repo GitHub
+étant privé, l'image ghcr l'est aussi — une authentification est nécessaire
+avant de la puller.
+
+### Authentification à ghcr.io (une fois par serveur)
+
+Créer un token GitHub (Settings → Developer settings → Personal access tokens
+→ Fine-grained ou classic) avec le scope `read:packages`, puis :
+
 ```bash
-docker compose up -d --build
+echo "<votre-token>" | docker login ghcr.io -u zlimteck --password-stdin
+```
+
+Sur Portainer, faire la même chose côté hôte Docker (SSH) avant de déployer
+le stack, ou renseigner les identifiants de registry dans Portainer
+(Registries → Add registry → GitHub Container Registry).
+
+### Lancer le stack
+
+```bash
+docker compose pull && docker compose up -d
 ```
 
 Voir `docker-compose.yml` pour les limites de ressources (0.5 CPU / 512 Mo,
 large marge au-dessus du besoin réel).
 
-### Déploiement en stack via Portainer (dossier local sur le même serveur)
+`instances.json` doit exister sur le serveur, dans le dossier contenant le
+`docker-compose.yml` (copié depuis `instances.example.json` puis rempli, voir
+plus haut) — il n'est jamais versionné dans Git (`.gitignore`) et le service y
+écrit (approbations, demandes en attente).
 
-- **En SSH direct sur le serveur**, depuis ce dossier : `docker compose up -d
-  --build` fonctionne tel quel, `build: context: .` pointe sur le dossier
-  courant.
-- **Via l'UI Portainer** (Stacks → Add stack → Web editor, contenu du compose
-  collé manuellement) : Portainer exécute le compose depuis son propre dossier
-  interne (`/data/compose/<id>/`), donc `context: .` ne trouvera pas le
-  `Dockerfile` ici. Remplacer dans `docker-compose.yml` :
+### Mettre à jour l'image
 
-  ```yaml
-  build:
-    context: /chemin/absolu/vers/ce/dossier/sur/le/serveur
-    dockerfile: Dockerfile
-  ```
+```bash
+docker compose pull && docker compose up -d
+```
 
-Dans les deux cas, `instances.json` doit exister dans ce dossier sur le
-serveur (copié depuis `instances.example.json` puis rempli, voir plus haut) —
-il n'est jamais versionné dans Git (`.gitignore`).
+(ou via Portainer : Stacks → sélectionner le stack → "Pull and redeploy").
