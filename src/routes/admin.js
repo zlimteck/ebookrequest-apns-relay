@@ -4,6 +4,21 @@ import { listPendingInstances, listActiveInstances, approveInstance, rejectInsta
 
 const router = Router();
 
+// Authentification uniquement via Authorization: Bearer <ADMIN_SECRET>, jamais de
+// cookies/session — Access-Control-Allow-Origin: * est donc sans risque ici (pas de
+// credentials à protéger derrière une origine précise). Le preflight OPTIONS doit être
+// géré avant requireAdminAuth : le navigateur ne renvoie jamais le header Authorization
+// dessus, une auth à ce stade le ferait échouer systématiquement en 401/503.
+router.use('/admin', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 router.get('/admin/pending', requireAdminAuth, (req, res) => {
   res.json(listPendingInstances());
 });
