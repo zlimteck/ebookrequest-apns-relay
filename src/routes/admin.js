@@ -1,11 +1,15 @@
 import { Router } from 'express';
 import { requireAdminAuth } from '../middleware/adminAuth.js';
-import { listPendingInstances, approveInstance, rejectInstance } from '../services/instanceService.js';
+import { listPendingInstances, listActiveInstances, approveInstance, rejectInstance } from '../services/instanceService.js';
 
 const router = Router();
 
 router.get('/admin/pending', requireAdminAuth, (req, res) => {
   res.json(listPendingInstances());
+});
+
+router.get('/admin/instances', requireAdminAuth, (req, res) => {
+  res.json(listActiveInstances());
 });
 
 router.post('/admin/approve/:instanceId', requireAdminAuth, (req, res) => {

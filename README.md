@@ -111,6 +111,17 @@ reste inutilisable tant que vous ne l'avez pas approuvé.
 Sans `ADMIN_SECRET` défini, les routes `/admin/*` renvoient `503` — le service
 ne s'ouvre jamais en administration "par défaut".
 
+### Lister les instances actives
+
+```bash
+curl https://votre-relais/admin/instances \
+  -H "Authorization: Bearer <ADMIN_SECRET>"
+```
+
+Retourne `instanceId`, `label`, `domain`, `contactEmail` (si fourni) et
+`approvedAt` pour chaque instance au statut actif — jamais le jeton ni son
+hash.
+
 ## Comment une instance EbookRequest doit appeler `/send`
 
 ```

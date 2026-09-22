@@ -96,6 +96,21 @@ export function listPendingInstances() {
     }));
 }
 
+/**
+ * @returns {{ instanceId, label, domain, contactEmail, approvedAt }[]} — jamais le token/hash.
+ */
+export function listActiveInstances() {
+  return instances
+    .filter(isActive)
+    .map(({ instanceId, label, domain, contactEmail, approvedAt }) => ({
+      instanceId,
+      label,
+      domain,
+      ...(contactEmail ? { contactEmail } : {}),
+      ...(approvedAt ? { approvedAt } : {}),
+    }));
+}
+
 export function approveInstance(instanceId) {
   const entry = instances.find((i) => i.instanceId === instanceId && i.status === 'pending');
   if (!entry) return false;
