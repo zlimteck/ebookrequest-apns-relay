@@ -91,6 +91,18 @@ reste inutilisable tant que vous ne l'avez pas approuvé.
    Réponse : `{ "status": "pending" }` ou `{ "status": "active" }`. Un token
    inconnu (ou absent) renvoie `404`, sans distinguer les deux cas.
 
+   Elle peut aussi couper elle-même son accès à tout moment (pending ou
+   active), sans passer par vous :
+
+   ```bash
+   curl -X POST https://votre-relais/revoke \
+     -H "Authorization: Bearer <token-de-l-instance>"
+   ```
+
+   Réponse : `{ "revoked": true }`. Un token inconnu renvoie `401`, sans
+   distinguer les deux cas. Le token révoqué doit être régénéré via un
+   nouveau `/register-request` pour retrouver l'accès.
+
 2. Vous êtes notifié : un log `[Register] Nouvelle demande en attente...`
    apparaît dans les logs Docker, et si `NOTIFY_WEBHOOK_URL` est configuré
    (ntfy.sh, Discord/Slack via un endpoint compatible `{ "text": "..." }`),

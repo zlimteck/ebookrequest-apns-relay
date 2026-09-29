@@ -4,6 +4,7 @@ import { loadInstances } from './services/instanceService.js';
 import healthRoutes from './routes/health.js';
 import sendRoutes from './routes/send.js';
 import statusRoutes from './routes/status.js';
+import revokeRoutes from './routes/revoke.js';
 import registerRoutes from './routes/register.js';
 import adminRoutes from './routes/admin.js';
 
@@ -20,6 +21,7 @@ app.use(express.json({ limit: '256kb' }));
 app.use(healthRoutes);
 app.use(sendRoutes);
 app.use(statusRoutes);
+app.use(revokeRoutes);
 app.use(registerRoutes);
 app.use(adminRoutes);
 

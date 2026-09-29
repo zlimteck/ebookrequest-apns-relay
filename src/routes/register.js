@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { registerRateLimiter } from '../middleware/rateLimit.js';
 import { addPendingInstance, isValidInstanceId, InstanceServiceError } from '../services/instanceService.js';
 import { notifyPendingRequest } from '../services/notifyService.js';
+import { auditLog } from '../services/auditLog.js';
 
 const router = Router();
 
@@ -42,6 +43,7 @@ router.post('/register-request', registerRateLimiter, (req, res) => {
   }
 
   notifyPendingRequest({ instanceId, label, domain, contactEmail }).catch(() => {});
+  auditLog('Register', `Nouvelle demande instanceId=${instanceId} domain=${domain}`, req);
 
   res.status(201).json({ token });
 });

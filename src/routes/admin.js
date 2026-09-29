@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { requireAdminAuth } from '../middleware/adminAuth.js';
 import { listPendingInstances, listActiveInstances, approveInstance, rejectInstance } from '../services/instanceService.js';
+import { auditLog } from '../services/auditLog.js';
 
 const router = Router();
 
@@ -32,7 +33,7 @@ router.post('/admin/approve/:instanceId', requireAdminAuth, (req, res) => {
   if (!approved) {
     return res.status(404).json({ error: 'Pending instance not found' });
   }
-  console.log(`[Admin] Instance approuvée: ${req.params.instanceId}`);
+  auditLog('Admin', `Instance approuvée instanceId=${req.params.instanceId}`, req);
   res.json({ instanceId: req.params.instanceId, status: 'active' });
 });
 
@@ -41,7 +42,7 @@ router.post('/admin/reject/:instanceId', requireAdminAuth, (req, res) => {
   if (!rejected) {
     return res.status(404).json({ error: 'Pending instance not found' });
   }
-  console.log(`[Admin] Demande rejetée: ${req.params.instanceId}`);
+  auditLog('Admin', `Demande rejetée instanceId=${req.params.instanceId}`, req);
   res.status(204).send();
 });
 

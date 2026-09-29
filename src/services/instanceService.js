@@ -58,6 +58,22 @@ export function findInstanceStatusByToken(token) {
   return { instanceId: match.instanceId, status: isActive(match) ? 'active' : 'pending' };
 }
 
+/**
+ * Auto-révocation par l'instance elle-même (pending ou active), via son propre token.
+ * @param {string} token
+ * @returns {string | null} instanceId supprimé, ou null si le token ne correspond à rien
+ *   (permet de logger l'instanceId sans jamais journaliser le token en clair).
+ */
+export function revokeInstanceByToken(token) {
+  if (!token) return null;
+  const hash = hashToken(token);
+  const index = instances.findIndex((i) => i.apiKeyHash === hash);
+  if (index === -1) return null;
+  const [removed] = instances.splice(index, 1);
+  saveInstances();
+  return removed.instanceId;
+}
+
 export class InstanceServiceError extends Error {
   constructor(message, statusCode) {
     super(message);
