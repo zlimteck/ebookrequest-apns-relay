@@ -1,6 +1,6 @@
 {
   "name": "ebookrequest-apns-relay",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Relais push APNs partagé pour les instances self-hostées d'EbookRequest",
   "type": "module",
   "main": "src/index.js",
@@ -13,6 +13,6 @@
     "express-rate-limit": "^7.4.1"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   }
 }
